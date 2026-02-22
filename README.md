@@ -259,6 +259,36 @@ graph TD
     HS --> RC & RA
     RC -->|Answer| User((User))
     RA -->|Answer| User
+
+    style Config fill:#A855F7,stroke:#7C3AED,color:#fff
+    style S fill:#7C3AED,stroke:none,color:#fff
+
+    style Document fill:#60A5FA,stroke:#2563EB,color:#fff
+    style DL fill:#2563EB,stroke:none,color:#fff
+    style TC fill:#2563EB,stroke:none,color:#fff
+    style CH fill:#2563EB,stroke:none,color:#fff
+
+    style Embeddings fill:#22D3EE,stroke:#0891B2,color:#fff
+    style DE fill:#0891B2,stroke:none,color:#fff
+    style SE fill:#0891B2,stroke:none,color:#fff
+
+    style Storage fill:#FCD34D,stroke:#D97706,color:#78350F
+    style CM fill:#D97706,stroke:none,color:#fff
+    style DI fill:#D97706,stroke:none,color:#fff
+
+    style Search fill:#FB7185,stroke:#E11D48,color:#fff
+    style HS fill:#E11D48,stroke:none,color:#fff
+
+    style Generation fill:#4ADE80,stroke:#16A34A,color:#fff
+    style RC fill:#16A34A,stroke:none,color:#fff
+
+    style Agent fill:#FB923C,stroke:#EA580C,color:#fff
+    style RA fill:#EA580C,stroke:none,color:#fff
+
+    style Infrastructure fill:#FCA5A5,stroke:#DC244C,color:#7F1D1D
+    style QD fill:#DC244C,stroke:none,color:#fff
+
+    style User fill:#FDE047,stroke:#CA8A04,color:#78350F
 ```
 
 
