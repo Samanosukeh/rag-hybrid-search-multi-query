@@ -66,7 +66,7 @@ What is captured per trace:
 | Tool calls & results | — | ✅ |
 | Latency (end-to-end) | ✅ | ✅ |
 
-> **Live trace →** [RAG Agent · "How does Qdrant handle sparse vectors?"](https://us.cloud.langfuse.com/project/cmlxvbg68071ead07jrhkqnfp/traces/847d3f4286cb7a58357a65e0afec63d8?timestamp=2026-02-22T15:18:57.880Z)
+> **Live trace →** <a href="https://us.cloud.langfuse.com/project/cmlxvbg68071ead07jrhkqnfp/traces/847d3f4286cb7a58357a65e0afec63d8?timestamp=2026-02-22T15:18:57.880Z" target="_blank">RAG Agent · "How does Qdrant handle sparse vectors?"</a>
 
 ---
 
