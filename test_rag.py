@@ -2,16 +2,16 @@ import unittest
 
 from qdrant_client import QdrantClient
 
-from src.config.Settings import Settings
-from src.document.DocumentLoader import DocumentLoader
-from src.document.TextChunker import TextChunker
-from src.embeddings.DenseEmbedder import DenseEmbedder
-from src.embeddings.SparseEmbedder import SparseEmbedder
-from src.agent.RAGAgent import RAGAgent
-from src.generation.RAGChain import RAGChain
-from src.search.HybridSearcher import HybridSearcher
-from src.storage.CollectionManager import CollectionManager
-from src.storage.DocumentInserter import DocumentInserter
+from src.config.settings import Settings
+from src.document.document_loader import DocumentLoader
+from src.document.text_chunker import TextChunker
+from src.embeddings.dense_embedder import DenseEmbedder
+from src.embeddings.sparse_embedder import SparseEmbedder
+from src.agent.rag_agent import RAGAgent
+from src.generation.rag_chain import RAGChain
+from src.search.hybrid_searcher import HybridSearcher
+from src.storage.collection_manager import CollectionManager
+from src.storage.document_inserter import DocumentInserter
 
 
 class TestRAGPipeline(unittest.TestCase):
@@ -46,10 +46,6 @@ class TestRAGPipeline(unittest.TestCase):
     rag_chain = RAGChain(searcher=searcher, settings=settings)
     rag_agent = RAGAgent(searcher=searcher, settings=settings)
 
-    # ------------------------------------------------------------------ #
-    #  Test 01 – Create the Qdrant collection                             #
-    # ------------------------------------------------------------------ #
-
     def test_01_create_collection(self):
         """Creates (or recreates) the Qdrant collection with the correct schema."""
         dimension = self.dense_embedder.dimension()
@@ -60,13 +56,8 @@ class TestRAGPipeline(unittest.TestCase):
             msg=f"Collection '{self.settings.collection_name}' was not found after creation.",
         )
 
-
-    # ------------------------------------------------------------------ #
-    #  Test 02 – Insert documents from doc.txt                            #
-    # ------------------------------------------------------------------ #
-
     def test_02_insert_documents(self):
-        """Loads doc.txt, splits it into chunks, and upserts them into Qdrant."""
+        """Loads doc.md, splits it into chunks, and upserts them into Qdrant."""
         loader = DocumentLoader(file_path="doc.md")
         chunker = TextChunker(
             chunk_size=self.settings.chunk_size,
@@ -76,16 +67,12 @@ class TestRAGPipeline(unittest.TestCase):
         text = loader.load()
         chunks = chunker.chunk(text)
 
-        self.assertFalse(chunks.is_empty(), msg="doc.txt produced zero chunks – check the file.")
+        self.assertFalse(chunks.is_empty(), msg="doc.md produced zero chunks – check the file.")
 
         inserted = self.document_inserter.insert(chunks)
         point_count = self.client.count(collection_name=self.settings.collection_name).count
 
         print(f"\n[OK] Inserted {inserted} chunk(s) – collection now holds {point_count} point(s).")
-
-    # ------------------------------------------------------------------ #
-    #  Test 03 – Hybrid search via LangChain retriever                   #
-    # ------------------------------------------------------------------ #
 
     def test_03_search_returns_results(self):
         """Runs a hybrid search via LangChain QdrantVectorStore and asserts hits."""
@@ -104,10 +91,6 @@ class TestRAGPipeline(unittest.TestCase):
         for idx, doc in enumerate(documents, start=1):
             preview = doc.page_content[:200].replace("\n", " ")
             print(f"  [{idx}] {preview}...")
-
-    # ------------------------------------------------------------------ #
-    #  Test 04 – Hybrid search with metadata filter                       #
-    # ------------------------------------------------------------------ #
 
     def test_04_search_with_metadata_filter(self):
         """Runs a hybrid search filtered by header metadata."""
@@ -128,12 +111,11 @@ class TestRAGPipeline(unittest.TestCase):
             preview = doc.page_content[:200].replace("\n", " ")
             print(f"  [{idx}] {preview}...")
 
-    # ------------------------------------------------------------------ #
-    #  Test 05 – Full RAG: retrieve + generate via Mistral                #
-    # ------------------------------------------------------------------ #
-
     def test_05_rag_generates_answer(self):
-        """Sends a question through the full RAG chain and asserts a non-empty answer."""
+        """
+            Sends a question through the full RAG chain and asserts a non-empty answer.
+            Test 05 – Full RAG: retrieve + generate via Mistral
+        """
         query = "What is Retrieval-Augmented Generation?"
         answer = self.rag_chain.invoke(query)
 
@@ -143,13 +125,11 @@ class TestRAGPipeline(unittest.TestCase):
         print(f"\n[OK] Query: '{query}'")
         print(f"     Answer:\n{answer}")
 
-
-    # ------------------------------------------------------------------ #
-    #  Test 06 – Agent decides when to filter by metadata                  #
-    # ------------------------------------------------------------------ #
-
     def test_06_agent_answers_with_tool_calling(self):
-        """The agent autonomously chooses search tools and metadata filters."""
+        """
+            The agent autonomously chooses search tools and metadata filters.
+            Test 06 – Agent decides when to filter by metadata
+        """
         query = "How does Qdrant handle sparse vectors?"
         answer = self.rag_agent.invoke(query)
 
