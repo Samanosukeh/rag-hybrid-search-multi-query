@@ -1,10 +1,11 @@
 import os
 from dotenv import load_dotenv
 
+load_dotenv()
+
 
 class Settings:
     def __init__(self):
-        load_dotenv()
         self.openai_api_key: str = os.getenv("OPENAI_API_KEY", "")
         self.mistral_api_key: str = os.getenv("MISTRAL_API_KEY", "")
         self.model_embeddings: str = os.getenv("MODEL_EMBEDDINGS", "text-embedding-3-small")

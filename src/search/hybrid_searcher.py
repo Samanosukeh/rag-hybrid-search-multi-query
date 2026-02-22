@@ -8,7 +8,7 @@ from langchain_openai import OpenAIEmbeddings
 from langchain_qdrant import QdrantVectorStore, FastEmbedSparse, RetrievalMode
 from qdrant_client.http import models
 
-from src.config.Settings import Settings
+from src.config.settings import Settings
 
 
 class HybridSearcher:

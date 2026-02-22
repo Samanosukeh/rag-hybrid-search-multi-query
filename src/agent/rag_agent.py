@@ -2,9 +2,10 @@ import os
 
 from langchain.agents import create_agent
 from langchain_core.tools import tool
+from langfuse import get_client, observe
 
-from src.config.Settings import Settings
-from src.search.HybridSearcher import HybridSearcher
+from src.config.settings import Settings
+from src.search.hybrid_searcher import HybridSearcher
 
 
 class RAGAgent:
@@ -28,10 +29,14 @@ class RAGAgent:
             system_prompt=self.SYSTEM_PROMPT,
         )
 
+    @observe(name="rag_agent")
     def invoke(self, question: str) -> str:
+        langfuse = get_client()
+        langfuse.update_current_trace(tags=["agent"])
         result = self._agent.invoke(
             {"messages": [{"role": "user", "content": question}]}
         )
+        langfuse.flush()
         return result["messages"][-1].content
 
     @staticmethod

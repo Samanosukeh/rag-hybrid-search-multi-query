@@ -1,5 +1,6 @@
 from typing import Dict, Optional
 
+from langfuse import get_client, observe
 from pydantic import SecretStr
 
 from langchain_core.output_parsers import StrOutputParser
@@ -7,8 +8,8 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 from langchain_mistralai import ChatMistralAI
 
-from src.config.Settings import Settings
-from src.search.HybridSearcher import HybridSearcher
+from src.config.settings import Settings
+from src.search.hybrid_searcher import HybridSearcher
 
 
 class RAGChain:
@@ -26,7 +27,10 @@ class RAGChain:
         )
         self._prompt = ChatPromptTemplate.from_template(self.PROMPT_TEMPLATE)
 
+    @observe(name="rag_chain")
     def invoke(self, question: str, metadata: Optional[Dict[str, str]] = None) -> str:
+        langfuse = get_client()
+        langfuse.update_current_trace(tags=["chain"])
         retriever = self._searcher.as_retriever(metadata=metadata)
         chain = (
             {"context": retriever | self._format_documents, "question": RunnablePassthrough()}
@@ -34,7 +38,9 @@ class RAGChain:
             | self._llm
             | StrOutputParser()
         )
-        return chain.invoke(question)
+        result = chain.invoke(question)
+        langfuse.flush()
+        return result
 
     @staticmethod
     def _format_documents(documents):

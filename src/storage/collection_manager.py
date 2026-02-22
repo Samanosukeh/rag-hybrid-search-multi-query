@@ -1,7 +1,7 @@
 from qdrant_client import QdrantClient
 from qdrant_client.http import models
 
-from src.config.Settings import Settings
+from src.config.settings import Settings
 
 
 class CollectionManager:

@@ -4,10 +4,10 @@ from typing import List
 from qdrant_client import QdrantClient
 from qdrant_client.http import models
 
-from src.config.Settings import Settings
-from src.document.TextChunker import Chunks, TextChunk
-from src.embeddings.DenseEmbedder import DenseEmbedder
-from src.embeddings.SparseEmbedder import SparseEmbedder
+from src.config.settings import Settings
+from src.document.text_chunker import Chunks, TextChunk
+from src.embeddings.dense_embedder import DenseEmbedder
+from src.embeddings.sparse_embedder import SparseEmbedder
 
 
 class DocumentInserter:
