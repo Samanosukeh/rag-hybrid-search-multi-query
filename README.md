@@ -212,6 +212,7 @@ flowchart TB
 ## Architecture
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#ffffff', 'edgeLabelBackground': '#ffffff'}}}%%
 graph TD
     subgraph Config
         S[Settings]
@@ -289,6 +290,8 @@ graph TD
     style QD fill:#DC244C,stroke:none,color:#fff
 
     style User fill:#FDE047,stroke:#CA8A04,color:#78350F
+
+    linkStyle default stroke:#1e293b,stroke-width:1.5px,color:#1e293b
 ```
 
 
