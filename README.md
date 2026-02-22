@@ -15,7 +15,58 @@
 > that combines **dense (OpenAI)** and **sparse (BM25)** hybrid retrieval in Qdrant Cloud
 > with **Mistral** as the generation LLM — fully orchestrated by LangChain.
 
-![Python](https://img.shields.io/badge/Python-3.13-3776AB?style=flat-square&logo=python&logoColor=white) ![LangChain](https://img.shields.io/badge/LangChain-1.2-1C3C3C?style=flat-square&logo=langchain&logoColor=white) ![Mistral](https://img.shields.io/badge/Mistral_AI-FF7000?style=flat-square&logo=mistral&logoColor=white) ![OpenAI](https://img.shields.io/badge/OpenAI-412991?style=flat-square&logo=openai&logoColor=white) ![Qdrant](https://img.shields.io/badge/Qdrant-DC244C?style=flat-square&logo=qdrant&logoColor=white) ![Pydantic](https://img.shields.io/badge/Pydantic-E92063?style=flat-square&logo=pydantic&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3.13-3776AB?style=flat-square&logo=python&logoColor=white) ![LangChain](https://img.shields.io/badge/LangChain-1.2-1C3C3C?style=flat-square&logo=langchain&logoColor=white) ![Mistral](https://img.shields.io/badge/Mistral_AI-FF7000?style=flat-square&logo=mistral&logoColor=white) ![OpenAI](https://img.shields.io/badge/OpenAI-412991?style=flat-square&logo=openai&logoColor=white) ![Qdrant](https://img.shields.io/badge/Qdrant-DC244C?style=flat-square&logo=qdrant&logoColor=white) ![Pydantic](https://img.shields.io/badge/Pydantic-E92063?style=flat-square&logo=pydantic&logoColor=white) ![Langfuse](https://img.shields.io/badge/Langfuse-Observability-000000?style=flat-square&logo=langfuse&logoColor=white)
+
+---
+
+## Observability with Langfuse
+
+Every execution — chain or agent — is **fully traced** in [Langfuse](https://langfuse.com), capturing latency, token usage, cost, and model name per call.
+
+```mermaid
+flowchart LR
+    subgraph TRACE ["Langfuse Trace"]
+        direction TB
+        OBS["@observe decorator<br/><i>root span</i>"]
+
+        subgraph CHAIN_T ["RAG Chain trace"]
+            direction LR
+            LC1["LangChain CallbackHandler"] --> LLM1["ChatMistralAI<br/>model · tokens · cost"]
+        end
+
+        subgraph AGENT_T ["RAG Agent trace"]
+            direction LR
+            LC2["LangChain CallbackHandler"] --> LLM2["ChatMistralAI<br/>model · tokens · cost"]
+            LLM2 --> TOOLS["tool calls<br/>search_documents /<br/>search_by_section"]
+        end
+
+        OBS --> CHAIN_T
+        OBS --> AGENT_T
+    end
+
+    style TRACE fill:#0d1117,color:#e0e0e0,stroke:#000000,stroke-width:2px
+    style OBS fill:#2d2d44,color:#c0c0c0,stroke:none
+    style CHAIN_T fill:#1a1a2e,color:#e0e0e0,stroke:#2ea043,stroke-width:1px
+    style AGENT_T fill:#1a1a2e,color:#e0e0e0,stroke:#FF7000,stroke-width:1px
+    style LC1 fill:#2d2d44,color:#c0c0c0,stroke:none
+    style LC2 fill:#2d2d44,color:#c0c0c0,stroke:none
+    style LLM1 fill:#2d2d44,color:#c0c0c0,stroke:none
+    style LLM2 fill:#2d2d44,color:#c0c0c0,stroke:none
+    style TOOLS fill:#2d2d44,color:#c0c0c0,stroke:none
+```
+
+What is captured per trace:
+
+| Signal | RAG Chain | RAG Agent |
+|---|---|---|
+| Root span + tags | ✅ `chain` | ✅ `agent` |
+| Model name | ✅ | ✅ |
+| Prompt & completion tokens | ✅ | ✅ |
+| Cost | ✅ | ✅ |
+| Tool calls & results | — | ✅ |
+| Latency (end-to-end) | ✅ | ✅ |
+
+> **Live trace →** [RAG Agent · "How does Qdrant handle sparse vectors?"](https://us.cloud.langfuse.com/project/cmlxvbg68071ead07jrhkqnfp/traces/847d3f4286cb7a58357a65e0afec63d8?timestamp=2026-02-22T15:18:57.880Z)
 
 ---
 
@@ -362,5 +413,6 @@ rag-hybrid-search-multi-query/
 | LLM | ![Mistral](https://img.shields.io/badge/Mistral_AI-mistral--large--latest-FF7000?style=flat-square&logo=mistral&logoColor=white) |
 | RAG Chain | ![LangChain](https://img.shields.io/badge/LangChain-LCEL-1C3C3C?style=flat-square&logo=langchain&logoColor=white) |
 | RAG Agent | ![LangChain](https://img.shields.io/badge/LangChain-create__agent_+_tool--calling-1C3C3C?style=flat-square&logo=langchain&logoColor=white) |
+| Observability | ![Langfuse](https://img.shields.io/badge/Langfuse-traces_·_tokens_·_cost-000000?style=flat-square&logo=langfuse&logoColor=white) |
 | Language | ![Python](https://img.shields.io/badge/Python-3.13-3776AB?style=flat-square&logo=python&logoColor=white) |
 

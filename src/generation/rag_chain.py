@@ -1,6 +1,7 @@
 from typing import Dict, Optional
 
 from langfuse import get_client, observe
+from langfuse.langchain import CallbackHandler
 from pydantic import SecretStr
 
 from langchain_core.output_parsers import StrOutputParser
@@ -38,7 +39,7 @@ class RAGChain:
             | self._llm
             | StrOutputParser()
         )
-        result = chain.invoke(question)
+        result = chain.invoke(question, config={"callbacks": [CallbackHandler()]})
         langfuse.flush()
         return result
 

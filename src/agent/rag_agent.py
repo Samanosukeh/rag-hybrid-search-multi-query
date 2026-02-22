@@ -3,6 +3,7 @@ import os
 from langchain.agents import create_agent
 from langchain_core.tools import tool
 from langfuse import get_client, observe
+from langfuse.langchain import CallbackHandler
 
 from src.config.settings import Settings
 from src.search.hybrid_searcher import HybridSearcher
@@ -34,7 +35,8 @@ class RAGAgent:
         langfuse = get_client()
         langfuse.update_current_trace(tags=["agent"])
         result = self._agent.invoke(
-            {"messages": [{"role": "user", "content": question}]}
+            {"messages": [{"role": "user", "content": question}]},
+            config={"callbacks": [CallbackHandler()]},
         )
         langfuse.flush()
         return result["messages"][-1].content
